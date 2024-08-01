@@ -1,0 +1,1 @@
+SET greetings "🤖 this is a docker demo 🐳"

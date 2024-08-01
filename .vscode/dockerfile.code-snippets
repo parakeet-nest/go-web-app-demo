@@ -1,0 +1,102 @@
+{
+  "alpine-to-alpine": {
+    "body": [
+      "FROM alpine:3.17.2 AS final",
+      ""
+    ],
+    "description": "best practice: change the base image",
+    "prefix": "dockerfile-alpine-to-alpine",
+    "scope": "dockerfile"
+  },
+  "copy-public-directory": {
+    "body": [
+      "WORKDIR /app",
+      "# copy and give the rights to the user",
+      "COPY --chown=appuser public ./public ",
+      "COPY --from=build /bin/server .",
+      ""
+    ],
+    "description": "copy public directory after `USER appuser`",
+    "prefix": "docker-copy-public-directory",
+    "scope": "dockerfile"
+  },
+  "entrypoint": {
+    "body": [
+      "#ENTRYPOINT [ \"/bin/server\" ]",
+      "ENTRYPOINT [ \"./server\" ]",
+      ""
+    ],
+    "description": "entrypoint script",
+    "prefix": "docker-entrypoint",
+    "scope": "dockerfile"
+  },
+  "environment": {
+    "body": [
+      "environment:",
+      "  - MESSAGE=🎉 Hello from 🐳 Compose 👋",
+      "  - REDIS_URL=redis-server:6379",
+      ""
+    ],
+    "description": "add environment to service",
+    "prefix": "compose-env",
+    "scope": "yaml"
+  },
+  "new stage": {
+    "body": [
+      "FROM scratch AS final",
+      "WORKDIR /app",
+      "COPY --from=certificates /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/",
+      "COPY --from=build /bin/server .",
+      "COPY public ./public ",
+      ""
+    ],
+    "description": "new stage",
+    "prefix": "docker-new-stage",
+    "scope": "dockerfile"
+  },
+  "redis-service": {
+    "body": [
+      "redis-server:",
+      "  image: redis:7.2.4",
+      "  environment: ",
+      "    - REDIS_ARGS=--save 30 1",
+      "  volumes:",
+      "    - redis-data:/data",
+      "  ports:",
+      "    - 6379:6379",
+      "",
+      "bulk-loading:",
+      "  image: redis:7.2.4",
+      "  entrypoint: [\"/load-data/bulk_loading.sh\"]",
+      "  volumes:",
+      "    - ./load-data:/load-data",
+      "  depends_on:",
+      "    redis-server:",
+      "      condition: service_started",
+      "",
+      "volumes:",
+      "  redis-data:",
+      ""
+    ],
+    "description": "add redis-service",
+    "prefix": "compose-redis-service",
+    "scope": "yaml"
+  },
+  "watch": {
+    "body": [
+      "develop:",
+      "  watch:",
+      "    - action: sync",
+      "      path: ./public",
+      "      target: /app/public",
+      "    - action: rebuild",
+      "      path: ./Dockerfile",
+      "    - action: rebuild",
+      "      path: ./main.go",
+      ""
+    ],
+    "description": "add watch section to the main service",
+    "prefix": "compose-watch",
+    "scope": "yaml"
+  }
+}
