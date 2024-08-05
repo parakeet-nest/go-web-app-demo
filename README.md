@@ -1,10 +1,6 @@
 # Golang Demo
 
-## Data
-
-```
-SET greetings "🤖 this is a docker demo 🐳"
-```
+[🐋 Compose documentation 📝](https://docs.docker.com/compose/)
 
 ## Prompt
 
@@ -27,9 +23,12 @@ Regarding the Compose file:
 The Golang application is using a Redis database
 1. Add a redis service with "redis-server" as name to the compose file.
     - The redis service is listening on the default port
+    - The data files are stored in the /data directory
+    - Map a volume on this directory
 2. Add a webapp service 
     - The webapp service uses an environment variable (REDIS_URL)  to connect to the "redis-server" service
     - To set the value of REDIS_URL, use only the name of the redis service and the default redis port
+    - The webapp service uses these two environment variables: MESSAGE and TITLE
     - The webapp service is listening on the 8080 HTTP port
     - the webapp service depends on the redis-server service
         
@@ -39,26 +38,23 @@ Briefly explain each step after the Dockerfile and the Compose file.
 USER:
 Here's the project structure:
 .
-├── git.sh
 ├── go.mod
 ├── go.sum
-├── init.sh
-├── load-data
-│  ├── bulk_loading.sh
-│  └── data.txt
 ├── main.go
+├── data
+│  ├── load.sh
+│  └── read.sh
 ├── public
 │  ├── components
 │  │  ├── App.js
-│  │  └── Title.js
+│  │  ├── Footer.js
+│  │  ├── Header.js
+│  │  └── Main.js
 │  ├── css
-│  │  ├── install-pico.md
 │  │  └── pico.min.css
 │  ├── index.html
 │  ├── info.txt
 │  └── js
-│     ├── install-preact.md
-│     ├── preact-htm.js
-│     └── update.js
+│     └── preact-htm.js
 └── README.md
 ```

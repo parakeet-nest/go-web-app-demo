@@ -1,27 +1,31 @@
 import { html, render, Component } from '../js/preact-htm.js'
-import Title  from './Title.js'
+import Header  from './Header.js'
+import Main  from './Main.js'
+import Footer  from './Footer.js'
 
 class App extends Component {
   render() {
     return html`
-      <dialog open>
-        <article>
-          <header>
-            <!--
-            <button aria-label="Close" rel="prev"></button>
-            -->
-            <p>
-              <strong>🐳 Golang demo Hello</strong>
-            </p>
-          </header>
-          <p>
-            <${Title} subtitle="📦 this is a demo"/>
-          </p>
-          <!--
-          <h1>👋 Hello 🙂 world 🌍</h1>
-          -->
-        </article>
-      </dialog>
+
+      <div>
+        <header class="container">
+          <section>
+            <${Header}/>
+          </section>
+        </header>
+
+        <main class="container">
+          <section>
+            <${Main}/>
+          </section>
+        </main>
+
+        <footer class="container">
+          <section>
+            <${Footer}/>
+          </section>
+        </footer>
+      </div>
     `
   }
 }
