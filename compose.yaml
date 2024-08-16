@@ -1,1 +1,23 @@
-c
+version: "3.9"
+
+services:
+  redis-server:
+    image: redis:7.2.4
+    environment:
+      REDIS_ARGS: --save 30 1
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data:/data
+
+  webapp:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      MESSAGE: "Hello from Docker Compose"
+      TITLE: "My favorite restaurants"
+      REDIS_URL: redis-server:6379
+    depends_on:
+      - redis-server
+      

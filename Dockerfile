@@ -1,21 +1,20 @@
-FROM --platform=$BUILDPLATFORM golang:1.22.1-alpine AS builder
+FROM golang:1.22.1-alpine AS builder
 
 WORKDIR /app
-COPY main.go .
-COPY go.mod .
 
-ARG TARGETOS
-ARG TARGETARCH
+COPY main.go go.mod ./
 
-RUN <<EOF
-go mod tidy 
-GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -o tiny-service
-EOF
+RUN go mod tidy
 
+RUN go build -o tiny-service .
+
+# Stage 2: Create the Final Image
 FROM scratch
 
 WORKDIR /app
 
-COPY --from=builder /app/tiny-service .
-COPY public ./public 
-CMD ["./tiny-service"]
+COPY --from=builder /app/tiny-service /app/tiny-service
+
+COPY public ./public
+
+CMD ["/app/tiny-service"]
